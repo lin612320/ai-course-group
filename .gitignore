@@ -1,0 +1,29 @@
+# 编译产物
+out/
+*.class
+bin/
+target/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE 本地状态
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/usage.statistics.xml
+.idea/shelf/
+.vscode/
+
+# Office 临时文件
+~$*
+*.tmp
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 临时快照（版本管理交给 git，不再放手工 zip）
+_src_*_known_good.zip
+_encoding_backup*.zip

@@ -1,0 +1,17 @@
+# 文本文件统一 LF，避免不同系统上行尾来回变动
+* text=auto eol=lf
+
+# 二进制文件不做任何转换
+*.docx binary
+*.pptx binary
+*.xlsx binary
+*.pdf  binary
+*.png  binary
+*.jpg  binary
+*.zip  binary
+*.jar  binary
+
+# Java 源码按 LF 存储
+*.java text eol=lf
+*.py   text eol=lf
+*.md   text eol=lf
