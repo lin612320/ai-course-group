@@ -20,6 +20,7 @@ class DatasetBundle:
 
 
 def save_indices(path, **indices):
+    """划分结果落盘；第二次跑如果对不上就直接报错，不会悄悄换一份数据。"""
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.exists():
         with np.load(path, allow_pickle=False) as f:
@@ -32,6 +33,7 @@ def save_indices(path, **indices):
 
 def load_digits_data(cfg):
     X, y = load_digits(return_X_y=True)
+    # 先把 test 切出去，后面 refit、test 都别再碰它
     dev, test = train_test_split(np.arange(len(y)), test_size=cfg.digits_test_ratio,
                                 stratify=y, random_state=cfg.seed)
     train, val = train_test_split(dev, test_size=cfg.digits_val_ratio_in_dev,
@@ -89,6 +91,7 @@ def load_fashion_data(cfg):
     if cfg.fashion_dev_size % 10 or cfg.fashion_test_size % 10:
         raise ValueError("按类等量抽样时总样本数须为 10 的倍数")
     rng = np.random.default_rng(cfg.seed)
+    # 每类抽同样多。类别一旦不均，Macro-F1 会被小类拖着走，对照就不公平了。
     def sample(labels, n):
         ids = np.concatenate([rng.choice(np.flatnonzero(labels == k), n, replace=False)
                               for k in range(10)])

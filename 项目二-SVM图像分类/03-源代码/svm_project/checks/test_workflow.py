@@ -32,6 +32,7 @@ class WorkflowChecks(unittest.TestCase):
         self.tmp.cleanup()
 
     def test_refit_uses_development_data_only(self):
+        """重训只能用训练＋验证，测试集一张都不能混进来。"""
         refit_final_models(self.cfg, self.data)
         model = joblib.load(self.cfg.output / "models/selected.joblib")
         expected = np.concatenate([self.data.train[0], self.data.validation[0]])
@@ -40,6 +41,7 @@ class WorkflowChecks(unittest.TestCase):
         self.assertEqual(read_json(self.cfg.output / "refit_manifest.json")["n_train"], 240)
 
     def test_test_stage_never_fits(self):
+        """test 阶段一旦偷偷调用 fit，这里会直接炸。"""
         refit_final_models(self.cfg, self.data)
         with patch("sklearn.svm.SVC.fit", side_effect=AssertionError("测试阶段禁止拟合")), \
              patch("test.write_evaluation"):
@@ -47,6 +49,7 @@ class WorkflowChecks(unittest.TestCase):
         self.assertTrue((self.cfg.output / "test_results.csv").exists())
 
     def test_changed_selection_rejects_old_model(self):
+        """出完成绩又回头改配置，旧模型必须拒绝测试。"""
         refit_final_models(self.cfg, self.data)
         path = self.cfg.output / "selected_config.json"
         changed = read_json(path)
@@ -56,11 +59,13 @@ class WorkflowChecks(unittest.TestCase):
             evaluate_test(self.cfg, self.data)
 
     def test_changed_dataset_rejected(self):
+        """数据换了还拿旧配置重训，指纹校验要拦住。"""
         self.data.signature = "different-data"
         with self.assertRaisesRegex(ValueError, "数据与验证阶段不一致"):
             refit_final_models(self.cfg, self.data)
 
     def test_task1_cannot_test(self):
+        """Task 1 只出验证成绩，测试留给 Task 2 的最终模型。"""
         with self.assertRaises(SystemExit):
             parse_args(["--task", "1", "--stage", "test"])
 

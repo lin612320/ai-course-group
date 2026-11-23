@@ -8,7 +8,9 @@ from utils import save_table
 
 def validate(cfg, data):
     X, _ = data.train
-    # 固定条件对照使用同一个数值 gamma，避免标准化/PCA 时自动改变核参数。
+    # 这就是 sklearn 里 gamma="scale" 在原始像素上算出来的值：1 / (特征数 × 方差)。
+    # 三组对照共用这一个数，标准化和 PCA 之后也不重算。任务书要求"固定参数"，
+    # 代价是标准化会让这个 gamma 显得偏大，D2 掉分多半就出在这儿，报告里要解释清楚。
     g = float(1 / (X.shape[1] * X.var()))
     baseline = {"kernel": "linear", "C": 1}
     rbf = {"kernel": "rbf", "C": 1, "gamma": g}

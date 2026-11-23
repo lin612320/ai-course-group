@@ -42,6 +42,7 @@ def write_evaluation(out, name, pred, X, y, names, n_errors):
     report = classification_report(y, pred, labels=labels, target_names=names,
                                    digits=4, zero_division=0)
     (folder / "classification_report.txt").write_text(report, encoding="utf-8")
+    # 图按真实类别归一化，看的是"这一类里错了多少"；CSV 存原始计数，方便回查具体张数
     cm = confusion_matrix(y, pred, labels=labels)
     np.savetxt(folder / "confusion_counts.csv", cm, delimiter=",", fmt="%d")
     fig, ax = plt.subplots(figsize=(10, 8))
@@ -63,6 +64,7 @@ def write_evaluation(out, name, pred, X, y, names, n_errors):
 
 def plot_confusion_pairs(out, pred, X, y, names):
     cm = confusion_matrix(y, pred, labels=np.arange(10))
+    # 按两个方向的错分加起来排序：只看单向会漏掉"这一对互相认错"的情况
     pairs = sorted([(int(cm[a,b] + cm[b,a]), a, b) for a in range(10)
                     for b in range(a+1,10)], reverse=True)
     rows = []

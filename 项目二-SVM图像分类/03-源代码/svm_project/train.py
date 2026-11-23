@@ -43,6 +43,7 @@ def search_parameters(candidates, settings, train_set, val_set, selection_metric
 
 
 def freeze_selection(cfg, data, candidates, rows, winner, reference_models):
+    # 存的是完整参数，不是"第几号候选"。以后改 config.py 也不会影响已经定下来的方案。
     selected = {**reference_models, "selected": candidates[winner]}
     value = {"schema_version": 1, "task": cfg.task, "dataset": cfg.dataset,
              "data_fingerprint": data.signature,

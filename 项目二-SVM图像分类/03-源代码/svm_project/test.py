@@ -6,6 +6,7 @@ from visualize import write_evaluation, plot_confusion_pairs
 
 def evaluate_test(cfg, data):
     manifest = read_json(cfg.output / "refit_manifest.json")
+    # 下面几道校验分别防三件事：换了数据、跑完 test 又回头改配置、模型文件被调包
     if manifest.get("schema_version") != 1:
         raise ValueError("重训记录版本不兼容，请重新运行 refit")
     if manifest["task"] != cfg.task or manifest["dataset"] != cfg.dataset:

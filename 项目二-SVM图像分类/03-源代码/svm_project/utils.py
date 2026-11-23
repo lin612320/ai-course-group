@@ -30,15 +30,18 @@ def save_table(path, rows):
 
 
 def fingerprint(*arrays):
+    """把数据内容压成一个字符串，用来判断两次跑的是不是同一份数据。"""
     h = hashlib.sha256()
     for a in arrays:
         a = np.ascontiguousarray(a)
+        # shape 和 dtype 一起进哈希，否则形状不同的数组可能拼出同样的字节流
         h.update(str((a.shape, str(a.dtype))).encode())
         h.update(a.tobytes())
     return h.hexdigest()
 
 
 def json_digest(value):
+    # sort_keys 是必要的：同一份配置换个键顺序，也该算出同一个摘要
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
