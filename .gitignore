@@ -11,6 +11,10 @@ __pycache__/
 .venv/
 venv/
 
+# IDE 配置：里面是本机解释器路径，别人拉下来无效
+.idea/
+*.iml
+
 # 项目二：实验产物、数据与模型（可复现，不进仓库）
 results/
 datasets/
