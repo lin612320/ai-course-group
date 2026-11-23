@@ -8,6 +8,14 @@ target/
 __pycache__/
 *.pyc
 *.pyo
+.venv/
+venv/
+
+# 项目二：实验产物、数据与模型（可复现，不进仓库）
+results/
+datasets/
+models/
+*.joblib
 
 # IDE 本地状态
 .idea/workspace.xml
